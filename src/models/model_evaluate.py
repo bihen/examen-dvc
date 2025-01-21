@@ -1,109 +1,85 @@
 import pandas as pd
-import numpy as np
 import json
-from pathlib import Path
-import logging
-from sklearn.model_selection import GridSearchCV
-from sklearn.linear_model import ElasticNet, Ridge, Lasso
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error
 import joblib
-from ..check_structure import check_existing_file, check_existing_folder
 import os
+import logging
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+from ..check_structure import check_existing_file, check_existing_folder
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 INPUT_FOLDER = BASE_DIR / "data" / "processed"
-OUTPUT_FOLDER = BASE_DIR / "metrics" 
 MODEL_FOLDER = BASE_DIR / "models"
-CONFIG_FOLDER = BASE_DIR / "config"
+METRICS_FOLDER = BASE_DIR / "metrics"
+OUTPUT_FOLDER = METRICS_FOLDER
 
-# Mapping for model names to classes
-MODEL_MAPPING = {
-    "ridge": Ridge,
-    "elasticnet": ElasticNet,
-    "lasso": Lasso,
-    "randomforestregressor": RandomForestRegressor,
-    "gradientboostingregressor": GradientBoostingRegressor
-}
-
-def load_config():
+# Load the trained model from a joblib file
+def load_trained_model():
     """
-    Load the model selection config (config.json).
+    Load the trained model from the saved file.
     """
-    with open(os.path.join(CONFIG_FOLDER, "config.json")) as f:
-        config = json.load(f)
-    return config
+    model_path = MODEL_FOLDER / "trained_model.pkl"
+    if os.path.exists(model_path):
+        model = joblib.load(model_path)
+        return model
+    else:
+        raise FileNotFoundError(f"Model file not found at {model_path}")
 
-def load_best_params():
+# Load test data
+def load_test_data():
     """
-    Load the parameter grid config (best_params.pkl).
+    Load test dataset (X_test and y_test).
     """
-    path = os.path.join(MODEL_FOLDER, "best_params.pkl")
-    param_grid = joblib.load(path)
-    return param_grid
+    X_test = pd.read_csv(os.path.join(INPUT_FOLDER, "X_test_scaled.csv"))
+    y_test = pd.read_csv(os.path.join(INPUT_FOLDER, "y_test.csv"))
+    y_test = y_test.values.ravel()  
+    return X_test, y_test
 
-def main():
-    """ Trains the model using the best parameters determined by GridSearch.
+# Evaluate the model
+def evaluate_model(model, X_test, y_test, output_folderpath):
     """
-    config = load_config()
-    best_params = load_best_params()
-    model_name = config.get("model_name")
-    model_class = MODEL_MAPPING.get(model_name)
-    
-    logger = logging.getLogger(__name__)
-    logger.info(f'Training model {model_name}')
-    
-    input_filepath_test_x = os.path.join(INPUT_FOLDER, "X_test_scaled.csv")
-    input_filepath_train_x = os.path.join(INPUT_FOLDER, "X_train_scaled.csv")
-    input_filepath_test_y = os.path.join(INPUT_FOLDER, "y_test.csv")
-    inpút_filepath_train_y = os.path.join(INPUT_FOLDER, "y_train.csv")
-    output_folderpath = OUTPUT_FOLDER
-    
-    # Call the main data processing function with the provided file paths
-    train_model(input_filepath_test_x, input_filepath_train_x, 
-                 input_filepath_test_y, inpút_filepath_train_y,
-                 output_folderpath,
-                 model_class, best_params)
+    Evaluate the model using test data and calculate various metrics.
+    """
+    # Predict with the trained model
+    y_pred = model.predict(X_test)
 
-def train_model(input_filepath_test_x, input_filepath_train_x, 
-                 input_filepath_test_y, inpút_filepath_train_y, 
-                 output_folderpath,
-                 model, best_params):
- 
-    #--Importing dataset
-    X_train = pd.read_csv(input_filepath_train_x, sep=",")
-    X_test = pd.read_csv(input_filepath_test_x, sep=",")
-    y_train = pd.read_csv(inpút_filepath_train_y, sep=",")
-    y_test = pd.read_csv(input_filepath_test_y, sep=",")
-    
-    y_train = y_train.values.ravel()
-    y_test = y_test.values.ravel()
-    
-    trained_model = model()
-    trained_model.set_params(**best_params)
-    trained_model.fit(X_train, y_train)
+    # Calculate MSE, R^2, and optionally more metrics
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
 
-    print(f"Training complete with parameters: {best_params}")
-    
-    
-    
+    # Store metrics in a dictionary
+    metrics = {
+        "mse": mse,
+        "r2": r2,
+        "mae": mae,
+    }
     # Create folder if necessary 
     if check_existing_folder(output_folderpath) :
         os.makedirs(output_folderpath)
 
     #--Saving the best params in .pkl file
-    for file, filename in zip([trained_model], ['trained_model']):
-        output_filepath = os.path.join(output_folderpath, f'{filename}.joblib')
+    for file, filename in zip([metrics], ['scores']):
+        output_filepath = os.path.join(output_folderpath, f'{filename}.json')
         if check_existing_file(output_filepath):
-            joblib.dump(trained_model, output_filepath)
-            
+            joblib.dump(metrics, output_filepath)
+    return metrics
 
+# Main function
+def main():
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+    logger.info("Loading the trained model...")
+    model = load_trained_model()
+
+    logger.info("Loading the test data...")
+    X_test, y_test = load_test_data()
+
+    logger.info("Evaluating the model...")
+    metrics = evaluate_model(model, X_test, y_test, OUTPUT_FOLDER)
+
+    logger.info(f"Model evaluation metrics: {metrics}")
+    
 if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
-
-    # not used in this stub but often useful for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
-
-
     main()
