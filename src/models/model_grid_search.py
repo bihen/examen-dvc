@@ -8,7 +8,7 @@ from sklearn.linear_model import ElasticNet, Ridge, Lasso
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
 import joblib
-from ..data.check_structure import check_existing_file, check_existing_folder
+from ..check_structure import check_existing_file, check_existing_folder
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent

@@ -13,7 +13,7 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 INPUT_FOLDER = BASE_DIR / "data" / "processed"
-OUTPUT_FOLDER = BASE_DIR / "models" 
+OUTPUT_FOLDER = BASE_DIR / "metrics" 
 MODEL_FOLDER = BASE_DIR / "models"
 CONFIG_FOLDER = BASE_DIR / "config"
 

@@ -92,7 +92,7 @@ def train_model(input_filepath_test_x, input_filepath_train_x,
 
     #--Saving the best params in .pkl file
     for file, filename in zip([trained_model], ['trained_model']):
-        output_filepath = os.path.join(output_folderpath, f'{filename}.joblib')
+        output_filepath = os.path.join(output_folderpath, f'{filename}.pkl')
         if check_existing_file(output_filepath):
             joblib.dump(trained_model, output_filepath)
             

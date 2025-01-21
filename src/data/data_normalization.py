@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 import logging
 from sklearn.preprocessing import StandardScaler
-from check_structure import check_existing_file, check_existing_folder
+from ..check_structure import check_existing_file, check_existing_folder
 import os
 
 #@click.command()
