@@ -6,12 +6,17 @@ import logging
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from ..check_structure import check_existing_file, check_existing_folder
 from pathlib import Path
+import mlflow
+import dagshub
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 INPUT_FOLDER = BASE_DIR / "data" / "processed"
 MODEL_FOLDER = BASE_DIR / "models"
 METRICS_FOLDER = BASE_DIR / "metrics"
 OUTPUT_FOLDER = METRICS_FOLDER
+
+# DagsHub integration for MLflow
+dagshub.init(repo_owner='bihen', repo_name='examen-dvc', mlflow=True)
 
 # Load the trained model from a joblib file
 def load_trained_model():
@@ -80,6 +85,11 @@ def main():
     metrics = evaluate_model(model, X_test, y_test, OUTPUT_FOLDER)
 
     logger.info(f"Model evaluation metrics: {metrics}")
+    with mlflow.start_run():
+        for metric_name, metric_value in metrics.items():
+            mlflow.log_metric(metric_name, metric_value)
+        mlflow.log_param("model_evaluate", "complete")
+        print("Metrics logged to MLflow via DagsHub.")
     
 if __name__ == '__main__':
     main()
