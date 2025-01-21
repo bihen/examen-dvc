@@ -16,8 +16,7 @@ INPUT_FOLDER = BASE_DIR / "data" / "processed"
 OUTPUT_FOLDER = BASE_DIR / "data" / "processed"
 
 def main():
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
+    """ Normalizes the X_test, X_train datasets
     """
     
     logger = logging.getLogger(__name__)
@@ -28,9 +27,9 @@ def main():
     output_folderpath = OUTPUT_FOLDER
     
     # Call the main data processing function with the provided file paths
-    process_data(input_filepath_test, input_filepath_train, output_folderpath)
+    normalize_data(input_filepath_test, input_filepath_train, output_folderpath)
 
-def process_data(input_filepath_test, input_filepath_train, output_folderpath):
+def normalize_data(input_filepath_test, input_filepath_train, output_folderpath):
  
     #--Importing dataset
     X_train = pd.read_csv(input_filepath_train, sep=",")

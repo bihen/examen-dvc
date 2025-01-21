@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 import logging
 from sklearn.model_selection import train_test_split
-from check_structure import check_existing_file, check_existing_folder
+from ..check_structure import check_existing_file, check_existing_folder
 import os
 
 #@click.command()
@@ -16,8 +16,7 @@ INPUT_FOLDER = BASE_DIR / "data" / "raw_data"
 OUTPUT_FOLDER = BASE_DIR / "data" / "processed"
 
 def main():
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
+    """ Performs Train/test split on data in raw_data
     """
     
     logger = logging.getLogger(__name__)
