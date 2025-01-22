@@ -27,25 +27,25 @@ stages:
       size: 333757
     - path: src/data/data_splitting.py
       hash: md5
-      md5: 94dc9eaa054696bc72736190471faf4e
-      size: 2178
+      md5: c67a08aab8049b30623dd87476cd37f6
+      size: 2179
     outs:
     - path: data/processed/X_test.csv
       hash: md5
-      md5: d3be1be617366bc81a9254f075039b51
-      size: 78770
+      md5: 4bc9709405905410aba105d64991e643
+      size: 78661
     - path: data/processed/X_train.csv
       hash: md5
-      md5: 38e9f56c92d20ee33257e3918c901e7e
-      size: 183322
+      md5: e47265ac6868266452a43b9d9d44d83b
+      size: 183213
     - path: data/processed/y_test.csv
       hash: md5
-      md5: e064ea83fe860a49b9e9cfab1e8ec5a7
-      size: 9697
+      md5: 9625c68cb494f838db2e4d4f06816f7e
+      size: 9678
     - path: data/processed/y_train.csv
       hash: md5
-      md5: 4f1097f0b9053f0a94904c047541877f
-      size: 22710
+      md5: ba0ea301f25f35b7b2a6e8700239be33
+      size: 22691
   normalize:
     cmd: python -m src.data.data_normalization
     deps:

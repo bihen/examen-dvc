@@ -67,10 +67,12 @@ def evaluate_model(model, X_test, y_test):
         os.makedirs(METRICS_FOLDER)
 
     #--Saving the best params in .pkl file
+    
     for file, filename in zip([metrics], ['scores']):
         output_filepath = os.path.join(METRICS_FOLDER, f'{filename}.json')
         if check_existing_file(output_filepath):
-            joblib.dump(metrics, output_filepath)
+            with open(output_filepath, "w", encoding="utf-8") as output_filepath:
+                json.dump(file, output_filepath, indent=4, ensure_ascii=False)
             
     for file, filename in zip([y_pred], ['predictions']):
         output_filepath = os.path.join(OUTPUT_FOLDER, f'{filename}.csv')
