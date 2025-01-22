@@ -1,0 +1,19 @@
+stages:
+  split:
+    cmd: python -m src.data.data_splitting
+    deps:
+    - data/raw_data/raw.csv
+    - src/data/data_splitting.py
+    outs:
+    - data/processed/X_test.csv
+    - data/processed/X_train.csv
+    - data/processed/y_test.csv
+    - data/processed/y_train.csv
+  normalize:
+    cmd: python -m src.data.data_normalization
+    deps:
+    - data/processed/X_test.csv
+    - data/processed/X_train.csv
+    outs:
+    - data/processed/X_test_scaled.csv
+    - data/processed/X_train_scaled.csv
