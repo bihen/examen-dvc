@@ -52,7 +52,8 @@ def normalize_data(input_filepath_test, input_filepath_train, output_folderpath)
     for file, filename in zip([scaled_train, scaled_test], ['X_train_scaled', 'X_test_scaled']):
         output_filepath = os.path.join(output_folderpath, f'{filename}.csv')
         if check_existing_file(output_filepath):
-            file.to_csv(output_filepath, index=False, encoding='utf-8')
+            print(file.head())
+            file.to_csv(output_filepath, index=False, header=True, encoding='utf-8')
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
