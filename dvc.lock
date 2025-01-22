@@ -27,8 +27,8 @@ stages:
       size: 333757
     - path: src/data/data_splitting.py
       hash: md5
-      md5: b8d2641c46d123253c3bf6c5aefb6875
-      size: 2134
+      md5: 94dc9eaa054696bc72736190471faf4e
+      size: 2178
     outs:
     - path: data/processed/X_test.csv
       hash: md5
@@ -59,8 +59,8 @@ stages:
       size: 183322
     - path: src/data/data_normalization.py
       hash: md5
-      md5: 1bc4d80fd3948027e74d00457e652e24
-      size: 2476
+      md5: 91b24cf1fa6fcb107270855850f7855e
+      size: 2489
     outs:
     - path: data/processed/X_test_scaled.csv
       hash: md5
