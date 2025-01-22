@@ -47,7 +47,7 @@ def process_data(input_filepath, output_folderpath):
     for file, filename in zip([X_train, X_test, y_train, y_test], ['X_train', 'X_test', 'y_train', 'y_test']):
         output_filepath = os.path.join(output_folderpath, f'{filename}.csv')
         if check_existing_file(output_filepath):
-            file.to_csv(output_filepath, index=False)
+            file.to_csv(output_filepath, index=False, encoding='utf-8')
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

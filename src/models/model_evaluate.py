@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 INPUT_FOLDER = BASE_DIR / "data" / "processed"
 MODEL_FOLDER = BASE_DIR / "models"
 METRICS_FOLDER = BASE_DIR / "metrics"
-OUTPUT_FOLDER = METRICS_FOLDER
+OUTPUT_FOLDER = BASE_DIR / "data" / "processed"
 
 # DagsHub integration for MLflow
 dagshub.init(repo_owner='bihen', repo_name='examen-dvc', mlflow=True)
@@ -41,7 +41,7 @@ def load_test_data():
     return X_test, y_test
 
 # Evaluate the model
-def evaluate_model(model, X_test, y_test, output_folderpath):
+def evaluate_model(model, X_test, y_test):
     """
     Evaluate the model using test data and calculate various metrics.
     """
@@ -59,15 +59,24 @@ def evaluate_model(model, X_test, y_test, output_folderpath):
         "r2": r2,
         "mae": mae,
     }
+    
+    y_pred = pd.DataFrame(y_pred, columns = ["silica_concentrate"])
+    
     # Create folder if necessary 
-    if check_existing_folder(output_folderpath) :
-        os.makedirs(output_folderpath)
+    if check_existing_folder(METRICS_FOLDER) :
+        os.makedirs(METRICS_FOLDER)
 
     #--Saving the best params in .pkl file
     for file, filename in zip([metrics], ['scores']):
-        output_filepath = os.path.join(output_folderpath, f'{filename}.json')
+        output_filepath = os.path.join(METRICS_FOLDER, f'{filename}.json')
         if check_existing_file(output_filepath):
             joblib.dump(metrics, output_filepath)
+            
+    for file, filename in zip([y_pred], ['predictions']):
+        output_filepath = os.path.join(OUTPUT_FOLDER, f'{filename}.csv')
+        if check_existing_file(output_filepath):
+            file.to_csv(output_filepath, index=False, encoding='utf-8')
+            
     return metrics
 
 # Main function
@@ -82,7 +91,7 @@ def main():
     X_test, y_test = load_test_data()
 
     logger.info("Evaluating the model...")
-    metrics = evaluate_model(model, X_test, y_test, OUTPUT_FOLDER)
+    metrics = evaluate_model(model, X_test, y_test)
 
     logger.info(f"Model evaluation metrics: {metrics}")
     with mlflow.start_run():
