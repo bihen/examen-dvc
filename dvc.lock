@@ -1,23 +1,5 @@
 schema: '2.0'
 stages:
-  prepare:
-    cmd: python -m src.data.data_splitting
-    deps:
-    - path: data/raw_data
-      hash: md5
-      md5: a64646b88d471b1007635523cbc61dde.dir
-      size: 333854
-      nfiles: 3
-    - path: src/data/data_splitting.py
-      hash: md5
-      md5: 2c0a3dd468643a7dcfee2a90e5603e49
-      size: 2116
-    outs:
-    - path: data/processed
-      hash: md5
-      md5: ea5e20a3ece6ba76477bdc8f954ad90b.dir
-      size: 294499
-      nfiles: 4
   split:
     cmd: python -m src.data.data_splitting
     deps:
@@ -112,8 +94,8 @@ stages:
     outs:
     - path: models/trained_model.pkl
       hash: md5
-      md5: ba9a8e4b1d806da8a810e2dcfe22dc91
-      size: 21899137
+      md5: 6f78a5ca32da55b2247046dc7a4c28aa
+      size: 21814321
   evaluate:
     cmd: python -m src.models.model_evaluate
     deps:
@@ -135,8 +117,8 @@ stages:
       size: 22710
     - path: models/trained_model.pkl
       hash: md5
-      md5: ba9a8e4b1d806da8a810e2dcfe22dc91
-      size: 21899137
+      md5: 6f78a5ca32da55b2247046dc7a4c28aa
+      size: 21814321
     - path: src/models/model_evaluate.py
       hash: md5
       md5: 9c19b8d7e981c825c27f1460e9554d03
@@ -144,9 +126,9 @@ stages:
     outs:
     - path: data/processed/predictions.csv
       hash: md5
-      md5: b591962fee4459db4724173939ab4c7a
-      size: 10153
+      md5: 33a99349519391bc2a235fb27df165b1
+      size: 10155
     - path: metrics/scores.json
       hash: md5
-      md5: abe7842dd34430a4d9b6e4445ad97839
+      md5: a7f44eb0f3eacc8ee3d59c47ee0f9798
       size: 95
